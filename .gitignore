@@ -222,6 +222,7 @@ __marimo__/
 node_modules
 .gitignore
 Dockerfile
+/pcommit
 
 # Replace as required with your build location
 /build
