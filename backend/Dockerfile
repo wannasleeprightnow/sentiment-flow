@@ -14,6 +14,8 @@ RUN uv sync --frozen --no-cache
 
 COPY . .
 
-EXPOSE 8080
+ENV PYTHONPATH=/code/backend/src
 
-CMD ["uv", "run", "uvicorn", "src.app.main.app:create_app", "--factory", "--host", "0.0.0.0", "--port", "8080", "--reload"]
+RUN pip install -e .
+
+EXPOSE 8080

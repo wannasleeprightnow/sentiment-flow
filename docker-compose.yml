@@ -1,0 +1,125 @@
+services:
+  backend-dev:
+    container_name: backend-dev
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: 
+      - sh
+      - -c
+      - "uv run uvicorn app.main.app:create_app --factory --host 0.0.0.0 --port=8080 --reload"
+      # - "uv run gunicorn 'app.main.app:create_app()' --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8080 --workers 2"
+    # healthcheck:
+    #   test: ["CMD", "curl", "http://localhost:8080/healthcheck"]
+    #   interval: 30s
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    env_file:
+      - path: .env.${MODE}
+        required: True
+    volumes:
+      - .:/code
+    networks:
+      - app_network
+    # depends_on:
+    #   - postgres
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200m"
+        max-file: "3"
+    profiles:
+      - dev
+
+  # postgres:
+  #   image: postgres:16-alpine
+  #   container_name: postgres
+  #   command: ["postgres", "-c", "hba_file=/var/lib/postgresql/pg_hba.conf"]
+  #   restart: always
+  #   env_file:
+  #     - .env.${MODE}
+  #   ports:
+  #     - "5555:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #     - ./pg_hba.conf:/var/lib/postgresql/pg_hba.conf
+  #   networks:
+  #     - app_network
+  #   logging:
+  #     driver: "json-file"
+  #     options:
+  #       max-size: "100m"
+  #       max-file: "1"
+
+  # nginx:
+  #   image: nginx:latest
+  #   container_name: nginx
+  #   restart: unless-stopped
+  #   command: /bin/sh -c "envsubst < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
+  #   volumes:
+  #     - ./data/nginx/nginx.conf.template:/etc/nginx/nginx.conf.template:ro
+  #     - ./data/certbot/conf:/etc/letsencrypt
+  #     - ./data/certbot/www:/var/www/certbot
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   env_file:
+  #     - .env.${MODE}
+  #   depends_on:
+  #     - bot
+  #   networks:
+  #     - app_network
+  #   logging:
+  #     driver: "json-file"
+  #     options:
+  #       max-size: "100m"
+  #       max-file: "2"
+
+  # certbot:
+  #   image: certbot/certbot
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ./data/certbot/conf:/etc/letsencrypt
+  #     - ./data/certbot/www:/var/www/certbot
+  #   entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+  #   networks:
+  #     - app_network
+  #   logging:
+  #     driver: "json-file"
+  #     options:  
+  #       max-size: "100m"
+  #       max-file: "1"
+
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: redis
+  #   restart: always
+  #   command: redis-server --appendonly yes --appendfsync everysec
+  #   healthcheck:
+  #     test: ["CMD", "redis-cli","ping"]
+  #     interval: 30s
+  #   ports:
+  #     - "6379:6379"
+  #   env_file:
+  #     - .env.${MODE}
+  #   volumes:
+  #     - redis_data:/data
+  #     - ./redis.conf:/etc/redis/redis.conf
+  #   networks:
+  #     - app_network
+  #   logging:
+  #     driver: "json-file"
+  #     options:
+  #       max-size: "1m"
+  #       max-file: "1"
+
+
+volumes:
+  # redis_data:
+  # postgres_data:
+  ..:
+
+networks:
+  app_network:
+    driver: bridge
