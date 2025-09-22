@@ -1,12 +1,12 @@
-import { Button } from "@heroui/button";
+import { Route, Routes } from "react-router-dom";
+import { Auth } from "./pages/Auth";
+import { Main } from "./pages/Main";
 
-function App() {
-	return <>
-		<h1 className="text-3xl font-bold underline">
-			Hello world!
-		</h1>
-		<Button>dsadada</Button>
-	</>
+export function App() {
+	return (
+		<Routes>
+			<Route element={<Auth />} path="/auth" />
+			<Route element={<Main />} path="/" />
+		</Routes>
+	);
 }
-
-export default App;
