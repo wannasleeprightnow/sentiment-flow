@@ -18,8 +18,8 @@ class ConfigProvider(Provider):
         return config.postgres
 
     @provide(scope=Scope.APP)
-    def provide_sqlal_config(self, config: Config) -> SqlaConfig:
-        return config.sqlal
+    def provide_sqla_config(self, config: Config) -> SqlaConfig:
+        return config.sqla
 
     @provide(scope=Scope.APP)
     def provide_app_config(self, config: Config) -> AppConfig:

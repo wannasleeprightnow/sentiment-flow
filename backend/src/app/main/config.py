@@ -1,7 +1,10 @@
 from os import environ
+from pathlib import Path
 from typing import Literal
 
 from pydantic import BaseModel, Field, PostgresDsn
+
+BASE_DIR = Path(__file__).parent.parent.parent.parent
 
 
 class AppConfig(BaseModel):
@@ -12,6 +15,14 @@ class AppConfig(BaseModel):
     )
     docs_url: str | None = Field(alias="API_DOCS_URL", default=None)
     openapi_url: str | None = Field(alias="API_OPENAPI_URL", default=None)
+    prefix: str = Field(alias="APP_PREFIX_API", default="/api/")
+
+
+class JWTConfig(BaseModel):
+    expire_at_seconds: int = Field(alias="JWT_EXPIRE_TIME_SECONDS", default=1800)
+    alghorithm: str = "RS256"
+    public_key: Path = BASE_DIR / "private_keys" / "jwt-public.pem"
+    private_key: Path = BASE_DIR / "private_keys" / "jwt-private.pem"
 
 
 class PostgresConfig(BaseModel):
@@ -61,11 +72,14 @@ class Config(BaseModel):
     app: AppConfig = Field(
         default_factory=lambda: AppConfig(**environ)  # pyright: ignore
     )
+    jwt: JWTConfig = Field(
+        default_factory=lambda: JWTConfig(**environ)  # pyright: ignore
+    )
     logging: LoggingConfig = Field(
         default_factory=lambda: LoggingConfig(**environ)  # pyright: ignore
     )
     postgres: PostgresConfig = Field(
         default_factory=lambda: PostgresConfig(**environ)  # pyright: ignore
     )
-    sqlal: SqlaConfig = Field(default_factory=lambda: SqlaConfig(**environ))  # pyright: ignore
+    sqla: SqlaConfig = Field(default_factory=lambda: SqlaConfig(**environ))  # pyright: ignore
     redis: RedisConfig = Field(default_factory=lambda: RedisConfig(**environ))  # pyright: ignore

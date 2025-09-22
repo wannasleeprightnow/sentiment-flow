@@ -7,7 +7,7 @@ services:
     command: 
       - sh
       - -c
-      - "uv run uvicorn app.main.app:create_app --factory --host 0.0.0.0 --port=8080 --reload"
+      - "uv run alembic -c backend/alembic.ini upgrade head && uv run uvicorn app.main.app:create_app --factory --host 0.0.0.0 --port=8080 --reload"
       # - "uv run gunicorn 'app.main.app:create_app()' --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8080 --workers 2"
     # healthcheck:
     #   test: ["CMD", "curl", "http://localhost:8080/healthcheck"]
@@ -22,8 +22,8 @@ services:
       - .:/code
     networks:
       - app_network
-    # depends_on:
-    #   - postgres
+    depends_on:
+      - postgres-dev
     logging:
       driver: "json-file"
       options:
@@ -32,25 +32,27 @@ services:
     profiles:
       - dev
 
-  # postgres:
-  #   image: postgres:16-alpine
-  #   container_name: postgres
-  #   command: ["postgres", "-c", "hba_file=/var/lib/postgresql/pg_hba.conf"]
-  #   restart: always
-  #   env_file:
-  #     - .env.${MODE}
-  #   ports:
-  #     - "5555:5432"
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data
-  #     - ./pg_hba.conf:/var/lib/postgresql/pg_hba.conf
-  #   networks:
-  #     - app_network
-  #   logging:
-  #     driver: "json-file"
-  #     options:
-  #       max-size: "100m"
-  #       max-file: "1"
+  postgres-dev:
+    image: postgres:17-alpine
+    container_name: postgres
+    command: ["postgres", "-c", "hba_file=/var/lib/postgresql/pg_hba.conf"]
+    restart: always
+    env_file:
+      - .env.${MODE}
+    ports:
+      - "5555:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./pg_hba.conf:/var/lib/postgresql/pg_hba.conf
+    networks:
+      - app_network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "1"
+    profiles:
+      - dev
 
   # nginx:
   #   image: nginx:latest
@@ -117,7 +119,7 @@ services:
 
 volumes:
   # redis_data:
-  # postgres_data:
+  postgres_data:
   ..:
 
 networks:

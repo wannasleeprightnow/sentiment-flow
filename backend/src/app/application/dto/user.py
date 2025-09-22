@@ -1,0 +1,23 @@
+from typing import Literal
+from uuid import uuid4, UUID
+
+from pydantic import BaseModel, Field
+
+
+class User(BaseModel):
+    user_id: UUID
+    username: str
+    role: Literal["user", "admin"] = Field(default="user")
+
+
+class UserRegistration(BaseModel):
+    username: str
+    password: str
+    role: Literal["user", "admin"] = Field(default="user")
+
+
+class UserAdd(BaseModel):
+    user_id: UUID = Field(default_factory=uuid4)
+    username: str
+    password: bytes
+    role: Literal["user", "admin"] = Field(default="user")

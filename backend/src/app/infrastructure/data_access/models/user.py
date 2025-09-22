@@ -1,0 +1,27 @@
+from datetime import datetime
+from typing import Literal
+from uuid import UUID
+
+from sqlalchemy import func, DateTime
+from sqlalchemy.orm import mapped_column, Mapped
+
+from app.application.dto.user import User
+from app.infrastructure.data_access.models.base import Base
+
+
+class UserModel(Base):
+    __tablename__ = "users"
+
+    user_id: Mapped[UUID] = mapped_column(primary_key=True, unique=True)
+    username: Mapped[str]
+    password: Mapped[bytes]
+    role: Mapped[Literal["user", "admin"]] = mapped_column(default="user")
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+    def to_dto(self) -> User:
+        return User(
+            user_id=self.user_id,
+            username=self.username,
+            role=self.role,
+            created_at=self.created_at,
+        )
