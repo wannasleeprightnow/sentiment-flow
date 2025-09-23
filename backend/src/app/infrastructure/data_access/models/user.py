@@ -22,6 +22,7 @@ class UserModel(Base):
         return User(
             user_id=self.user_id,
             username=self.username,
+            password=self.password,
             role=self.role,
             created_at=self.created_at,
         )

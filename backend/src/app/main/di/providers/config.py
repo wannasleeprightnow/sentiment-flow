@@ -1,7 +1,7 @@
 from dishka import Provider, Scope, from_context, provide
 from dishka.dependency_source.composite import CompositeDependencySource
 
-from app.main.config import AppConfig, Config, PostgresConfig, SqlaConfig
+from app.main.config import AppConfig, Config, JWTConfig, PostgresConfig, SqlaConfig
 
 
 class ConfigProvider(Provider):
@@ -16,6 +16,10 @@ class ConfigProvider(Provider):
     @provide(scope=Scope.APP)
     def provide_postgres_config(self, config: Config) -> PostgresConfig:
         return config.postgres
+
+    @provide(scope=Scope.APP)
+    def provide_jwt_config(self, config: Config) -> JWTConfig:
+        return config.jwt
 
     @provide(scope=Scope.APP)
     def provide_sqla_config(self, config: Config) -> SqlaConfig:

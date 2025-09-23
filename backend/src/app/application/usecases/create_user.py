@@ -4,7 +4,7 @@ from app.application.protocols.uow import UoW
 from app.main.exceptions import UserAlreadyExistsError
 
 
-class CreateUserUseCase:
+class CreateUserUsecase:
     def __init__(self, uow: UoW):
         self._uow = uow
 
