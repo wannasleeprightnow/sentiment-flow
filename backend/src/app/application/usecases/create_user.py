@@ -1,20 +1,25 @@
 from app.application.dto.user import UserRegistration, UserAdd
 from app.application.auth_utils import hash_password
 from app.application.protocols.uow import UoW
-from app.main.exceptions import UserAlreadyExists
+from app.main.exceptions import UserAlreadyExistsError
 
 
 class CreateUserUseCase:
     def __init__(self, uow: UoW):
-        self.uow = uow
+        self._uow = uow
 
-    def __call__(self, register_user: UserRegistration) -> None:
-        if self.uow.users.get_one_by_username(register_user.username):
-            raise UserAlreadyExists
+    async def __call__(self, register_user: UserRegistration) -> None:
+        async with self._uow:
+            if (
+                await self._uow.users.get_one_by_username(register_user.username)
+                is not None
+            ):
+                raise UserAlreadyExistsError
 
-        user = UserAdd(
-            username=register_user.username,
-            password=hash_password(register_user.password),
-            role=register_user.role,
-        )
-        self.uow.users.add_one(user)
+            user = UserAdd(
+                username=register_user.username,
+                password=hash_password(register_user.password),
+                role=register_user.role,
+            )
+            await self._uow.users.add_one(user)
+            await self._uow.commit()

@@ -9,10 +9,12 @@ class SqlaUoW:
     users: SqlaUserRepository
 
     def __init__(self, async_session_maker: async_sessionmaker[AsyncSession]):
-        self._async_factory = async_session_maker()
+        self._async_factory = async_session_maker
 
     async def __aenter__(self) -> Self:
-        self._async_session: AsyncSession = self._async_session
+        self._async_session: AsyncSession = self._async_factory()
+
+        self.users = SqlaUserRepository(self._async_session)
 
         return self
 
@@ -21,7 +23,7 @@ class SqlaUoW:
         await self._async_session.close()
 
     async def commit(self) -> None:
-        self._async_session.commit()
+        await self._async_session.commit()
 
     async def rollback(self) -> None:
-        self._async_session.rollback()
+        await self._async_session.rollback()
