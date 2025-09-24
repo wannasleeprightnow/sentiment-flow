@@ -14,6 +14,7 @@ import {
 } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 import { Outlet } from 'react-router-dom'
+import classNames from '../helpers/classNames'
 
 const navigation = [
   { name: 'Dashboard', href: '#', icon: HomeIcon, current: true },
@@ -32,10 +33,6 @@ const userNavigation = [
   { name: 'Your profile', href: '#' },
   { name: 'Sign out', href: '#' },
 ]
-
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(' ')
-}
 
 export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -137,15 +134,6 @@ export default function Layout() {
                             ))}
                           </ul>
                         </li>
-                        {/*<li className="mt-auto">
-                          <a
-                            href="#"
-                            className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
-                          >
-                            <Cog6ToothIcon className="h-6 w-6 shrink-0" aria-hidden="true" />
-                            Settings
-                          </a>
-                        </li>*/}
                       </ul>
                     </nav>
                   </div>
@@ -208,15 +196,6 @@ export default function Layout() {
                       </li>
                     ))}
                   </ul>
-                </li>
-                <li className="mt-auto">
-                  <a
-                    href="#"
-                    className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
-                  >
-                    <Cog6ToothIcon className="h-6 w-6 shrink-0" aria-hidden="true" />
-                    Settings
-                  </a>
                 </li>
               </ul>
             </nav>

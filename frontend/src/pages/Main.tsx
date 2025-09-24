@@ -4,6 +4,8 @@ import ChartMain from "../components/ChartMain";
 import DataFilters from "../components/DataFilters";
 import { useState } from "react";
 import type { DateT } from "../types/dashboards";
+import FeedsBlock from "../components/FeedsBlock";
+import TableBlock from "../components/TableBlock";
 
 export function Main() {
 	const [startDate, setStartDate] = useState<DateT | null>(null)
@@ -39,8 +41,14 @@ export function Main() {
       title: "Статистика в тексте",
       subtitle: "Какая то хуйня еще",
       content: <>
-	  	выфвфвф
+	  	<TableBlock />
 	  </>
+    },
+	{
+      id: "3",
+      title: "Что надо сделать чтобы не быть ебланами",
+      subtitle: "Открыть список",
+      content: <FeedsBlock />
     }
   ];
   
