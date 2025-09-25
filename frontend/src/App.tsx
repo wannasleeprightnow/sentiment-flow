@@ -4,12 +4,12 @@ import { Auth } from "./pages/Auth";
 import { Main } from "./pages/Main";
 
 export function App() {
-  return (
-    <Routes>
-      <Route element={<Auth />} path="/auth" />
-      <Route element={<MainLayout />} path="/">
-        <Route element={<Main />} path="/" />
-      </Route>
-    </Routes>
-  );
+	return (
+		<Routes>
+			<Route element={<Auth />} path="/auth" />
+			<Route element={<MainLayout />} path="/">
+				<Route element={<Main />} path="/" />
+			</Route>
+		</Routes>
+	);
 }
