@@ -62,7 +62,7 @@ export function Dashboard() {
 		},
 	];
 
-	if(!isLoading) return <LoadingBlock />
+	if(isLoading) return <LoadingBlock />
 
 	console.log(data)
 	return (
