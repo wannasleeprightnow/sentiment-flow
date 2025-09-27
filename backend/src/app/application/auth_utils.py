@@ -1,7 +1,6 @@
-from datetime import datetime, timedelta, UTC
-
 import bcrypt
 import jwt
+from datetime import datetime, timedelta, UTC
 
 from app.main.config import JWTConfig
 
@@ -21,7 +20,9 @@ def jwt_encode(payload: dict, jwt_config: JWTConfig) -> str:
 
 def jwt_decode(token: str, jwt_config: JWTConfig) -> dict:
     decoded_jwt_token = jwt.decode(
-        jwt=token, key=jwt_config.public_key, algohrithms=[jwt_config.alghorithm]
+        jwt=token,
+        key=jwt_config.public_key.read_text(),
+        algorithms=[jwt_config.alghorithm],
     )
     return decoded_jwt_token
 
