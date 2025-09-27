@@ -15,7 +15,7 @@ class AppConfig(BaseModel):
     )
     docs_url: str | None = Field(alias="API_DOCS_URL", default=None)
     openapi_url: str | None = Field(alias="API_OPENAPI_URL", default=None)
-    prefix: str = Field(alias="APP_PREFIX_API", default="/api/")
+    prefix: str = Field(alias="APP_PREFIX_API", default="/api")
 
 
 class JWTConfig(BaseModel):
