@@ -3,20 +3,20 @@ from typing import Literal
 from pydantic import BaseModel
 
 
-class Review(BaseModel):
+class ReviewDTO(BaseModel):
     id: int
     text: str
 
 
-class Prediction(BaseModel):
+class PredictRequestDTO(BaseModel):
+    data: list[ReviewDTO]
+
+
+class PredictionDTO(BaseModel):
     id: int
     topics: list[str]
     sentiments: list[Literal["положительно", "отрицательно", "нейтрально"]]
 
 
-class PredictRequest(BaseModel):
-    data: list[Review]
-
-
-class PredictsResponse(BaseModel):
-    predictions: list[Prediction]
+class PredictsResponseDTO(BaseModel):
+    predictions: list[PredictionDTO]

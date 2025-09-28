@@ -8,17 +8,14 @@ class UoW(Protocol):
     users: UserRepository
 
     @abstractmethod
-    def __aenter__(self) -> Self:
-        raise NotImplementedError
+    def __aenter__(self) -> Self: ...
 
     @abstractmethod
     async def __aexit__(self, *args: tuple) -> None:  # pyright: ignore[reportUnknownParameterType, reportMissingTypeArgument]
-        raise NotImplementedError
+        ...
 
     @abstractmethod
-    async def commit(self) -> None:
-        raise NotImplementedError
+    async def commit(self) -> None: ...
 
     @abstractmethod
-    async def rollback(self) -> None:
-        raise NotImplementedError
+    async def rollback(self) -> None: ...

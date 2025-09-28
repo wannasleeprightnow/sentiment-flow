@@ -27,6 +27,8 @@ host = os.getenv("POSTGRES_HOST")
 port = os.getenv("POSTGRES_PORT")
 db = os.getenv("POSTGRES_DB")
 
+print(f"postgresql+asyncpg://{user}:{password}@{host}:{port}/{db}?async_fallback=True")
+
 config.set_main_option(
     "sqlalchemy.url",
     (f"postgresql+asyncpg://{user}:{password}@{host}:{port}/{db}?async_fallback=True"),

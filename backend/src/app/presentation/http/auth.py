@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Response
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
 
-from app.application.dto.user import UserCredentials, UserRegistration
+from app.application.dto.user import UserCredentialsDTO, UserRegistrationDTO
 from app.main.config import JWTConfig
 from app.application.usecases.auth_login import AuthLoginUsecase
 from app.application.usecases.create_user import CreateUserUsecase
@@ -12,7 +12,7 @@ router = APIRouter(prefix="/auth", tags=["auth"], route_class=DishkaRoute)
 @router.post("/login", response_model=None, status_code=204)
 async def login(
     jwt_config: FromDishka[JWTConfig],
-    credentials: UserCredentials,
+    credentials: UserCredentialsDTO,
     usecase: FromDishka[AuthLoginUsecase],
     response: Response,
 ):
@@ -28,7 +28,9 @@ async def login(
 
 
 @router.post("/registration", response_model=None, status_code=201)
-async def registration(usecase: FromDishka[CreateUserUsecase], user: UserRegistration):
+async def registration(
+    usecase: FromDishka[CreateUserUsecase], user: UserRegistrationDTO
+):
     await usecase(user)
 
 

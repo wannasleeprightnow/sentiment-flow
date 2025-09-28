@@ -4,25 +4,31 @@ from uuid import uuid4, UUID
 from pydantic import BaseModel, Field
 
 
-class User(BaseModel):
+class UserDTO(BaseModel):
+    user_id: UUID
+    username: str
+    role: Literal["user", "admin"] = Field(default="user")
+
+
+class UserWithPasswordDTO(BaseModel):
     user_id: UUID
     username: str
     password: bytes
     role: Literal["user", "admin"] = Field(default="user")
 
 
-class UserRegistration(BaseModel):
+class UserRegistrationDTO(BaseModel):
     username: str
     password: str
     role: Literal["user", "admin"] = Field(default="user")
 
 
-class UserCredentials(BaseModel):
+class UserCredentialsDTO(BaseModel):
     username: str
     password: str
 
 
-class UserAdd(BaseModel):
+class UserAddDTO(BaseModel):
     user_id: UUID = Field(default_factory=uuid4)
     username: str
     password: bytes

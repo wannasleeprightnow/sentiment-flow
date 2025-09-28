@@ -1,5 +1,5 @@
 from app.application.protocols.uow import UoW
-from app.application.dto.user import UserCredentials
+from app.application.dto.user import UserCredentialsDTO
 from app.application.auth_utils import is_valid_password, jwt_encode
 from app.main.config import JWTConfig
 from app.main.exceptions import InvalidCredentials
@@ -10,9 +10,11 @@ class AuthLoginUsecase:
         self._jwt_config = jwt_config
         self._uow = uow
 
-    async def __call__(self, credentials: UserCredentials) -> str:
+    async def __call__(self, credentials: UserCredentialsDTO) -> str:
         async with self._uow:
-            user = await self._uow.users.get_one_by_username(credentials.username)
+            user = await self._uow.users.get_one_by_username_with_password(
+                credentials.username
+            )
 
             if user is None or not is_valid_password(
                 credentials.password, user.password
