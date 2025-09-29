@@ -5,6 +5,7 @@ from sqlalchemy import String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from app.application.dto.topic import TopicDTO
 from app.infrastructure.data_access.models.base import Base
 
 if TYPE_CHECKING:
@@ -20,3 +21,9 @@ class TopicModel(Base):
     reviews: Mapped[list["ReviewModel"]] = relationship(
         back_populates="topics", uselist=True, secondary="topic_review"
     )
+
+    def to_dto(self) -> TopicDTO:
+        return TopicDTO(
+            topic_id=self.topic_id,
+            title=self.title,
+        )

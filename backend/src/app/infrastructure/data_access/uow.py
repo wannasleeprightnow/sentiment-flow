@@ -2,10 +2,12 @@ from typing import Self
 
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
+from app.infrastructure.data_access.repositories.topic import SqlaTopicRepository
 from app.infrastructure.data_access.repositories.user import SqlaUserRepository
 
 
 class SqlaUoW:
+    topics: SqlaTopicRepository
     users: SqlaUserRepository
 
     def __init__(self, async_session_maker: async_sessionmaker[AsyncSession]):
@@ -14,6 +16,7 @@ class SqlaUoW:
     async def __aenter__(self) -> Self:
         self._async_session: AsyncSession = self._async_factory()
 
+        self.topics = SqlaTopicRepository(self._async_session)
         self.users = SqlaUserRepository(self._async_session)
 
         return self

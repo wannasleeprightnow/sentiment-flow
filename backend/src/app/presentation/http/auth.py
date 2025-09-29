@@ -23,7 +23,6 @@ async def login(
         max_age=jwt_config.expire_at_seconds,
         httponly=True,
         samesite="strict",
-        # secure=True,
     )
 
 

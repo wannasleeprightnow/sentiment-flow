@@ -25,7 +25,7 @@ class ReviewModel(Base):
 
     review_id: Mapped[uuid.UUID] = mapped_column(UUID, primary_key=True)
     text: Mapped[str] = mapped_column(Text, nullable=True)
-    sentiments: Mapped[list[Sentiment]] = mapped_column(ARRAY(Enum(Sentiment)))
+    sentiment: Mapped[Sentiment] = mapped_column(Enum(Sentiment))
     created_at: Mapped[datetime.datetime] = mapped_column(DateTime)
     rating: Mapped[int]
 

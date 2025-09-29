@@ -9,7 +9,6 @@ from app.application.dto.predict import (
     PredictionDTO,
 )
 
-
 router = APIRouter(route_class=DishkaRoute)
 
 
