@@ -8,10 +8,10 @@ from app.application.dto.review import ReviewsDTO
 from app.application.usecases.get_reviews_by_topic import GetReviewsByTopicUsecase
 
 
-router = APIRouter(tags=["review"], route_class=DishkaRoute)
+router = APIRouter(prefix="/review", tags=["review"], route_class=DishkaRoute)
 
 
-@router.get("/review/{topic_id}", response_model=ReviewsDTO, status_code=200)
+@router.get("/{topic_id}", response_model=ReviewsDTO, status_code=200)
 async def get_reviews_by_topic(
     topic_id: UUID,
     user_id: FromDishka[UUID],

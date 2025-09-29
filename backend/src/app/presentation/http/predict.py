@@ -9,10 +9,10 @@ from app.application.dto.predict import (
     PredictionDTO,
 )
 
-router = APIRouter(route_class=DishkaRoute)
+router = APIRouter(prefix="/predict", route_class=DishkaRoute)
 
 
-@router.post("/predict", response_model=PredictsResponseDTO)
+@router.post("", response_model=PredictsResponseDTO)
 def predict(
     user_id: FromDishka[UUID], predict: PredictRequestDTO = Body()
 ) -> PredictsResponseDTO:
