@@ -10,6 +10,7 @@ from app.main.di.container import container_factory
 from app.presentation.http.auth import router as auth_router
 from app.presentation.http.healthcheck import router as healthcheck_router
 from app.presentation.http.predict import router as predict_router
+from app.presentation.http.review import router as review_router
 from app.presentation.http.topic import router as topic_router
 
 
@@ -23,6 +24,7 @@ def init_routers(app: FastAPI, api_prefix: str) -> None:
     app.include_router(auth_router, prefix=api_prefix)
     app.include_router(healthcheck_router, prefix=api_prefix)
     app.include_router(predict_router, prefix=api_prefix)
+    app.include_router(review_router, prefix=api_prefix)
     app.include_router(topic_router, prefix=api_prefix)
 
 

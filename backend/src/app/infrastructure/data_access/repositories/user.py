@@ -22,7 +22,9 @@ class SqlaUserRepository:
         ).scalar_one_or_none()
         return user.to_dto() if user else None
 
-    async def get_one_by_username_with_password(self, username: str) -> UserWithPasswordDTO | None:
+    async def get_one_by_username_with_password(
+        self, username: str
+    ) -> UserWithPasswordDTO | None:
         user = (
             await self._session.execute(
                 select(UserModel).where(UserModel.username == username)

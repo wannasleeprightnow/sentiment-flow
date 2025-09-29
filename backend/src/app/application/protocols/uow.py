@@ -1,11 +1,13 @@
 from abc import abstractmethod
 from typing import Protocol, Self
 
+from app.application.protocols.repositories.review import ReviewRepository
 from app.application.protocols.repositories.topic import TopicRepository
 from app.application.protocols.repositories.user import UserRepository
 
 
 class UoW(Protocol):
+    reviews: ReviewRepository
     topics: TopicRepository
     users: UserRepository
 
