@@ -1,8 +1,8 @@
-FROM node:24-slim as build
+FROM node:23-slim as build
 
 COPY package*.json ./
 
-RUN npm install
+RUN npm install --force
 
 COPY . .
 

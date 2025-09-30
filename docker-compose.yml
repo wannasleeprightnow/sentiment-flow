@@ -16,7 +16,7 @@ services:
     ports:
       - "8080:8080"
     env_file:
-      - path: .env.${MODE}
+      - path: .env.dev
         required: True
     volumes:
       - .:/code
@@ -38,7 +38,7 @@ services:
     command: ["postgres", "-c", "hba_file=/var/lib/postgresql/pg_hba.conf"]
     restart: always
     env_file:
-      - .env.${MODE}
+      - .env.dev
     ports:
       - "5555:5432"
     volumes:
@@ -54,19 +54,19 @@ services:
     profiles:
       - dev
   
-    frontend-dev:
+  frontend-dev:
       build:
         context: frontend/
         dockerfile: Dockerfile
       container_name: frontend-dev
       restart: always
       env_file:
-        - path: .env.{MODE}
+        - path: .env.dev
           required: true
       volumes:
         - ./frontend:/code
       networks:
-        - network
+        - app_network
       depends_on:
         - backend-dev
       profiles:
@@ -82,7 +82,7 @@ services:
     ports:
       - "80:80"
     env_file:
-      - .env.${MODE}
+      - .env.dev
     depends_on:
       - backend-dev
       - frontend-dev
