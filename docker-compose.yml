@@ -7,11 +7,11 @@ services:
     command: 
       - sh
       - -c
-      - "uv run alembic -c backend/alembic.ini upgrade head && uv run uvicorn app.main.app:create_app --factory --host 0.0.0.0 --port=8080 --reload"
-      # - "uv run gunicorn 'app.main.app:create_app()' --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8080 --workers 2"
-    # healthcheck:
-    #   test: ["CMD", "curl", "http://localhost:8080/healthcheck"]
-    #   interval: 30s
+      # - "uv run alembic -c backend/alembic.ini upgrade head && uv run uvicorn app.main.app:create_app --factory --host 0.0.0.0 --port=8080 --reload"
+      - "uv run alembic -c backend/alembic.ini upgrade head && uv run gunicorn 'app.main.app:create_app()' --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8080 --workers 2"
+    healthcheck:
+      test: ["CMD", "curl", "http://localhost:8080/healthcheck"]
+      interval: 30s
     restart: unless-stopped
     ports:
       - "8080:8080"
@@ -53,9 +53,27 @@ services:
         max-file: "1"
     profiles:
       - dev
+  
+    frontend-dev:
+      build:
+        context: frontend/
+        dockerfile: Dockerfile
+      container_name: frontend-dev
+      restart: always
+      env_file:
+        - path: .env.{MODE}
+          required: true
+      volumes:
+        - ./frontend:/code
+      networks:
+        - network
+      depends_on:
+        - backend-dev
+      profiles:
+        - dev
 
   nginx-dev:
-    image: nginx:latest
+    image: nginx:alpine
     container_name: nginx-dev
     restart: unless-stopped
     command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
@@ -67,6 +85,7 @@ services:
       - .env.${MODE}
     depends_on:
       - backend-dev
+      - frontend-dev
     networks:
       - app_network
     logging:
@@ -77,47 +96,7 @@ services:
     profiles:
       - dev
 
-  # certbot:
-  #   image: certbot/certbot
-  #   restart: unless-stopped
-  #   volumes:
-  #     - ./data/certbot/conf:/etc/letsencrypt
-  #     - ./data/certbot/www:/var/www/certbot
-  #   entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
-  #   networks:
-  #     - app_network
-  #   logging:
-  #     driver: "json-file"
-  #     options:  
-  #       max-size: "100m"
-  #       max-file: "1"
-
-  # redis:
-  #   image: redis:7-alpine
-  #   container_name: redis
-  #   restart: always
-  #   command: redis-server --appendonly yes --appendfsync everysec
-  #   healthcheck:
-  #     test: ["CMD", "redis-cli","ping"]
-  #     interval: 30s
-  #   ports:
-  #     - "6379:6379"
-  #   env_file:
-  #     - .env.${MODE}
-  #   volumes:
-  #     - redis_data:/data
-  #     - ./redis.conf:/etc/redis/redis.conf
-  #   networks:
-  #     - app_network
-  #   logging:
-  #     driver: "json-file"
-  #     options:
-  #       max-size: "1m"
-  #       max-file: "1"
-
-
 volumes:
-  # redis_data:
   postgres_data:
   ..:
 
