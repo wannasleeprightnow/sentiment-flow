@@ -220,6 +220,9 @@ __marimo__/
 
 # Contains all your dependencies
 node_modules
+.gitignore
+Dockerfile
+/pcommit
 
 # Replace as required with your build location
 /build
