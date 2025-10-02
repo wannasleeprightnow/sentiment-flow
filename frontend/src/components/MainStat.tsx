@@ -1,5 +1,4 @@
 import type { ReviewI } from "../api/api";
-import ChartForAllTime from "./ChartForAllTime";
 import LoadingBlock from "./LoadingBlock";
 
 function StatItem(stat: { name: string; value: number; unit?: string }) {
@@ -43,7 +42,7 @@ function MainStat({total, reviews} : {total?: number, reviews?: ReviewI[]}): Rea
 					</div>
 				</div>
 			</div>
-			<ChartForAllTime />
+			{/*<ChartForAllTime />*/}
 		</>
 	);
 }

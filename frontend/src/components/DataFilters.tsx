@@ -1,12 +1,12 @@
 import { Button } from "@heroui/button";
 import { DatePicker } from "@heroui/date-picker";
-import type { DateT } from "../types/dashboards";
+import { parseDate, type CalendarDate, type CalendarDateTime, type ZonedDateTime } from "@internationalized/date";
 import toast from "react-hot-toast"
 
 interface PropsI {
-	startDate: DateT | null;
-	endDate: DateT | null;
-	handleChangeDate: (type: "start" | "end", value: DateT) => void;
+	startDate: string | null;
+	endDate: string | null;
+	handleChangeDate: (type: "start" | "end", value: string) => void;
 	handleSaveFilters: () => void;
 }
 
@@ -16,8 +16,32 @@ function DataFilters({
 	handleChangeDate,
 	handleSaveFilters,
 }: PropsI) {
+	
+	// Функция для преобразования строки в DateValue
+	const parseDateString = (dateString: string | null): CalendarDate | null => {
+		if (!dateString) return null;
+		try {
+			const [day, month, year] = dateString.split('.').map(Number);
+			// Создаем дату в формате, который понимает DatePicker
+			return parseDate(`${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`);
+		} catch (error) {
+			return null;
+		}
+	};
+
+	// Функция для обработки изменения даты
+	const handleDateChange = (type: "start" | "end") => (value: CalendarDate | CalendarDateTime | ZonedDateTime | null) => {
+		if (value) {
+			const dateString = `${value.day}.${value.month}.${value.year}`;
+			handleChangeDate(type, dateString);
+		} else {
+			// Если значение null, очищаем дату
+			handleChangeDate(type, "");
+		}
+	};
+
 	const handleDownloadStatment = () => {
-		return toast.loading("Функция в разработке");
+		return toast.error("Функция в разработке");
 	};
 
 	return (
@@ -25,13 +49,15 @@ function DataFilters({
 			<div className="flex gap-6">
 				<DatePicker
 					className="w-46"
-					value={startDate}
-					onChange={(e: DateT) => handleChangeDate("start", e)}
+					label="Начальная дата"
+					value={parseDateString(startDate)}
+					onChange={handleDateChange("start")}
 				/>
 				<DatePicker
 					className="w-46"
-					value={endDate}
-					onChange={(e: DateT) => handleChangeDate("end", e)}
+					label="Конечная дата"
+					value={parseDateString(endDate)}
+					onChange={handleDateChange("end")}
 				/>
 				<Button color="primary" className="w-32" onClick={handleSaveFilters}>
 					Применить

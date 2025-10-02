@@ -60,10 +60,9 @@ interface GetInfoByIdI {
 }
 
 async function getInfoByTopicsId({id, options}: GetInfoByIdI) {
-  console.log(options.from_date, options.to_date);
 
   try {
-    const response: AxiosResponse<ReviewsI> = await instance.get(`/review/${id}`);
+    const response: AxiosResponse<ReviewsI> = await instance.get(`/review/${id}?from_date=${options?.from_date ?? null}&to_date=${options.to_date ?? null}`);
 
     return {
       data: response.data,

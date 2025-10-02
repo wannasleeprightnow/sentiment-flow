@@ -1,13 +1,27 @@
 import * as echarts from "echarts";
 import { useEffect, useRef } from "react";
 
-function ChartMain() {
+function ChartMain({data}: {data: any}) {
 	const chartRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
-		if (!chartRef.current) return;
+		if (!chartRef.current || !data) return;
 
 		const chart = echarts.init(chartRef.current);
+
+		const sortedData = [...data].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+		
+		const dates = [...new Set(sortedData.map(item => item.date))];
+		
+		const positive = dates.map(date => 
+			sortedData.filter(item => item.date === date && item.sentiment === "положительно").length
+		);
+		const neutral = dates.map(date => 
+			sortedData.filter(item => item.date === date && item.sentiment === "нейтрально").length
+		);
+		const negative = dates.map(date => 
+			sortedData.filter(item => item.date === date && item.sentiment === "отрицательно").length
+		);
 
 		chart.setOption({
 			legend: {},
@@ -17,10 +31,10 @@ function ChartMain() {
 			},
 			dataset: {
 				source: [
-					["Отзывы", "2020", "2021", "2022", "2023", "2024", "2025"],
-					["Положительные", 56.5, 82.1, 88.7, 70.1, 53.4, 85.1],
-					["Нейтральные", 51.1, 51.4, 55.1, 53.3, 73.8, 68.7],
-					["Отрицательные", 40.1, 62.2, 69.5, 36.4, 45.2, 32.5],
+					["Дата", ...dates],
+					["Положительные", ...positive],
+					["Нейтральные", ...neutral],
+					["Отрицательные", ...negative],
 				],
 			},
 			xAxis: { type: "category" },
@@ -54,12 +68,12 @@ function ChartMain() {
 						focus: "self",
 					},
 					label: {
-						formatter: "{b}: {@2025} ({d}%)",
+						formatter: "{b}: {@2024-01-15} ({d}%)",
 					},
 					encode: {
-						itemName: "Отзывы",
-						value: "2025",
-						tooltip: "2025",
+						itemName: "Дата",
+						value: "2024-01-15",
+						tooltip: "2024-01-15",
 					},
 				},
 			],
@@ -68,7 +82,7 @@ function ChartMain() {
 		return () => {
 			chart.dispose();
 		};
-	}, []);
+	}, [data]);
 
 	return (
 		<div

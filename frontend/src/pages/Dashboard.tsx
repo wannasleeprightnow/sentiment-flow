@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ChartMain from "../components/ChartMain";
 import CustomAccordion from "../components/CustomAccordion";
 import DataFilters from "../components/DataFilters";
@@ -6,31 +6,64 @@ import FeedsBlock from "../components/FeedsBlock";
 import LoadingBlock from "../components/LoadingBlock";
 import MainStat from "../components/MainStat";
 import TableBlock from "../components/TableBlock";
-import type { DateT } from "../types/dashboards";
 import { useInfoByTopicId } from "../hooks/useInfoByTopicId";
+import toast from "react-hot-toast";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export function Dashboard() {
 	const { data, isLoading } = useInfoByTopicId();
-	const [startDate, setStartDate] = useState<DateT | null>(null);
-	const [endDate, setEndDate] = useState<DateT | null>(null);
 
-	const handleChangeDate = (type: "start" | "end", value: DateT): void => {
-		switch (type) {
-			case "start": {
-				setStartDate(value);
-				break;
-			}
-			case "end": {
-				setEndDate(value);
-				break;
-			}
-			default:
-				console.error("Недоступная дата");
-				break;
+	const location = useLocation()
+	const nav = useNavigate()
+	const [startDate, setStartDate] = useState<string | null>(null);
+	const [endDate, setEndDate] = useState<string | null>(null);
+
+	useEffect(() => {
+		const searchParams = new URLSearchParams(location.search);
+		const startParam = searchParams.get("start");
+		const endParam = searchParams.get("end");
+		
+		if (startParam) {
+			setStartDate(startParam);
 		}
-	};
+		
+		if (endParam) {
+			setEndDate(endParam);
+		}
+	}, [location.search])
 
-	const handleSaveFilters = () => {};
+	const handleChangeDate = (type: "start" | "end", value: string): void => {
+    switch (type) {
+        case "start": {
+            setStartDate(value || null);
+            break;
+        }
+        case "end": {
+            setEndDate(value || null);
+            break;
+        }
+        default:
+            toast.error("Недоступная дата")
+            break;
+    }
+};
+
+	const handleSaveFilters = () => {
+		const searchParams = new URLSearchParams(location.search);
+
+		searchParams.delete("start");
+		searchParams.delete("end");
+
+		if(startDate) {
+			searchParams.set("start", startDate);
+		}
+		if(endDate) {
+			searchParams.set("end", endDate);
+		}
+		
+		nav(`?${searchParams.toString()}`, { replace: true });
+		toast.success("Фильтры сохранены");
+	};
 
 	const accordionSections = [
 		{
@@ -39,7 +72,7 @@ export function Dashboard() {
 			subtitle: "Стаистика в графическом виде за выбранный период",
 			content: (
 				<>
-					<ChartMain />
+					<ChartMain data={data?.data.reviews} />
 				</>
 			),
 		},
