@@ -11,11 +11,11 @@ class AppConfig(BaseModel):
     title: str = Field(alias="APP_TITLE")
     allow_origins: list[str] = Field(
         alias="API_ALLOW_ORIGINS",
-        default=["http://localhost:5173", "http://frontend-dev"],
+        default=["*"],
     )
     docs_url: str | None = Field(alias="API_DOCS_URL", default=None)
     openapi_url: str | None = Field(alias="API_OPENAPI_URL", default=None)
-    prefix: str = Field(alias="APP_PREFIX_API", default="")
+    prefix: str = Field(alias="APP_PREFIX_API", default="/api")
 
 
 class JWTConfig(BaseModel):
@@ -81,5 +81,9 @@ class Config(BaseModel):
     postgres: PostgresConfig = Field(
         default_factory=lambda: PostgresConfig(**environ)  # pyright: ignore
     )
-    sqla: SqlaConfig = Field(default_factory=lambda: SqlaConfig(**environ))  # pyright: ignore
-    redis: RedisConfig = Field(default_factory=lambda: RedisConfig(**environ))  # pyright: ignore
+    sqla: SqlaConfig = Field(
+        default_factory=lambda: SqlaConfig(**environ)
+    )  # pyright: ignore
+    redis: RedisConfig = Field(
+        default_factory=lambda: RedisConfig(**environ)
+    )  # pyright: ignore

@@ -3,14 +3,14 @@ import ChartMain from "../components/ChartMain";
 import CustomAccordion from "../components/CustomAccordion";
 import DataFilters from "../components/DataFilters";
 import FeedsBlock from "../components/FeedsBlock";
+import LoadingBlock from "../components/LoadingBlock";
 import MainStat from "../components/MainStat";
 import TableBlock from "../components/TableBlock";
-import type { DateT } from "../types/dashboards";
 import { useGetInfoByCategory } from "../hooks/useGetInfoByCategory";
-import LoadingBlock from "../components/LoadingBlock";
+import type { DateT } from "../types/dashboards";
 
 export function Dashboard() {
-	const {data, isLoading} = useGetInfoByCategory()
+	const { data, isLoading } = useGetInfoByCategory();
 
 	const [startDate, setStartDate] = useState<DateT | null>(null);
 	const [endDate, setEndDate] = useState<DateT | null>(null);
@@ -26,7 +26,7 @@ export function Dashboard() {
 				break;
 			}
 			default:
-				console.error("Недоступная дата")
+				console.error("Недоступная дата");
 				break;
 		}
 	};
@@ -62,9 +62,9 @@ export function Dashboard() {
 		},
 	];
 
-	if(isLoading) return <LoadingBlock />
+	if (isLoading) return <LoadingBlock />;
 
-	console.log(data)
+	console.log(data);
 	return (
 		<div className="flex flex-col gap-6">
 			<MainStat />
