@@ -256,3 +256,5 @@ vite.config.ts.timestamp-*
 
 .ruff_cache/
 private_keys/
+
+models/
