@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { BrowserRouter } from "react-router-dom";
 import { App } from "./App.tsx";
 import "./styles/index.css";
+import { Toaster } from "react-hot-toast";
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -18,6 +19,7 @@ const queryClient = new QueryClient({
 createRoot(document.getElementById("root")!).render(
 	<QueryClientProvider client={queryClient}>
 		<HeroUIProvider>
+			<Toaster />
 			<BrowserRouter>
 				<App />
 			</BrowserRouter>

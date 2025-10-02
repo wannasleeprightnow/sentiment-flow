@@ -1,6 +1,7 @@
 import { Button } from "@heroui/button";
 import { DatePicker } from "@heroui/date-picker";
 import type { DateT } from "../types/dashboards";
+import toast from "react-hot-toast"
 
 interface PropsI {
 	startDate: DateT | null;
@@ -16,7 +17,7 @@ function DataFilters({
 	handleSaveFilters,
 }: PropsI) {
 	const handleDownloadStatment = () => {
-		return true;
+		return toast.loading("Функция в разработке");
 	};
 
 	return (

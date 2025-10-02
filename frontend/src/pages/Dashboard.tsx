@@ -6,12 +6,11 @@ import FeedsBlock from "../components/FeedsBlock";
 import LoadingBlock from "../components/LoadingBlock";
 import MainStat from "../components/MainStat";
 import TableBlock from "../components/TableBlock";
-import { useGetInfoByCategory } from "../hooks/useGetInfoByCategory";
 import type { DateT } from "../types/dashboards";
+import { useInfoByTopicId } from "../hooks/useInfoByTopicId";
 
 export function Dashboard() {
-	const { data, isLoading } = useGetInfoByCategory();
-
+	const { data, isLoading } = useInfoByTopicId();
 	const [startDate, setStartDate] = useState<DateT | null>(null);
 	const [endDate, setEndDate] = useState<DateT | null>(null);
 
@@ -61,13 +60,11 @@ export function Dashboard() {
 			content: <FeedsBlock />,
 		},
 	];
-
+	
 	if (isLoading) return <LoadingBlock />;
-
-	console.log(data);
 	return (
 		<div className="flex flex-col gap-6">
-			<MainStat />
+			<MainStat total={data?.data.total_count} reviews={data?.data.reviews} />
 			<DataFilters
 				startDate={startDate}
 				endDate={endDate}
