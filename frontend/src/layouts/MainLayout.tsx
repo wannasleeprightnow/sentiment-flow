@@ -1,44 +1,60 @@
 import { Dialog, Menu, Transition } from "@headlessui/react";
-import {
-  ChevronDownIcon,
-  MagnifyingGlassIcon,
-} from "@heroicons/react/20/solid";
+import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import {
   Bars3Icon,
-  BellIcon,
-  FolderIcon,
-  HomeIcon,
-  UsersIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { Fragment, useState } from "react";
 import { Link, Outlet, useParams } from "react-router-dom";
 import classNames from "../helpers/classNames";
-
-const navigation = [
-  { name: "Вклад", href: "/vklad", icon: HomeIcon, current: true },
-  { name: "Кредит", href: "/credit", icon: UsersIcon, current: false },
-  {
-    name: "Автокредит",
-    href: "/auto-credit",
-    icon: FolderIcon,
-    current: false,
-  },
-];
-const teams = [
-  { id: 1, name: "Heroicons", href: "#", initial: "H", current: false },
-  { id: 2, name: "Tailwind Labs", href: "#", initial: "T", current: false },
-  { id: 3, name: "Workcation", href: "#", initial: "W", current: false },
-];
-
-const userNavigation = [
-  { name: "Your profile", href: "#" },
-  { name: "Sign out", href: "#" },
-];
+import { useTpoics } from "../hooks/useTopics";
+import { Skeleton } from "@heroui/react";
+import { usePostLogout } from "../hooks/usePostLogout";
+import type { TopicI } from "../api/api";
 
 export default function Layout() {
   const { categoryId } = useParams() as { categoryId: string };
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { data, isLoading } = useTpoics();
+  const { mutate, isLoading: isLogoutProcess } = usePostLogout();
+
+  const userNavigation = [
+    {
+      name: "Выйти с аккаунта",
+      func: () => {
+        if (!isLogoutProcess) mutate();
+      },
+    },
+  ];
+
+  function renderListNavigation() {
+    return (
+      <ul role="list" className="-mx-2 space-y-1">
+        {isLoading || (data?.data.topics && data?.data.topics.length > 0) ? (
+          data?.data.topics.map((item: TopicI) => (
+            <li key={item.topic_id}>
+              <Link
+                to={`/${item.topic_id}`}
+                className={classNames(
+                  item.topic_id == categoryId
+                    ? "bg-gray-800 text-white"
+                    : "text-gray-400 hover:text-white hover:bg-gray-800",
+                  "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+                )}
+              >
+                {item.title}
+              </Link>
+            </li>
+          ))
+        ) : (
+          <>
+            <Skeleton className="w-full h-[40px]" />
+            <Skeleton className="w-full h-[40px]" />
+          </>
+        )}
+      </ul>
+    );
+  }
 
   return (
     <>
@@ -106,52 +122,7 @@ export default function Layout() {
                     <nav className="flex flex-1 flex-col">
                       <ul role="list" className="flex flex-1 flex-col gap-y-7">
                         <li>
-                          <ul role="list" className="-mx-2 space-y-1">
-                            {navigation.map((item) => (
-                              <li key={item.name}>
-                                <Link
-                                  to={item.href}
-                                  className={classNames(
-                                    item.href == `/${categoryId}`
-                                      ? "bg-gray-800 text-white"
-                                      : "text-gray-400 hover:text-white hover:bg-gray-800",
-                                    "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                                  )}
-                                >
-                                  <item.icon
-                                    className="h-6 w-6 shrink-0"
-                                    aria-hidden="true"
-                                  />
-                                  {item.name}
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
-                        </li>
-                        <li>
-                          <div className="text-xs font-semibold leading-6 text-gray-400">
-                            Your teams
-                          </div>
-                          <ul role="list" className="-mx-2 mt-2 space-y-1">
-                            {teams.map((team) => (
-                              <li key={team.name}>
-                                <Link
-                                  to={team.href}
-                                  className={classNames(
-                                    team.href == `/${categoryId}`
-                                      ? "bg-gray-800 text-white"
-                                      : "text-gray-400 hover:text-white hover:bg-gray-800",
-                                    "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                                  )}
-                                >
-                                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white">
-                                    {team.initial}
-                                  </span>
-                                  <span className="truncate">{team.name}</span>
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
+                          {renderListNavigation()}
                         </li>
                       </ul>
                     </nav>
@@ -170,52 +141,7 @@ export default function Layout() {
             <nav className="flex flex-1 flex-col">
               <ul role="list" className="flex flex-1 flex-col gap-y-7">
                 <li>
-                  <ul role="list" className="-mx-2 space-y-1">
-                    {navigation.map((item) => (
-                      <li key={item.name}>
-                        <Link
-                          to={item.href}
-                          className={classNames(
-                            item.href == `/${categoryId}`
-                              ? "bg-gray-800 text-white"
-                              : "text-gray-400 hover:text-white hover:bg-gray-800",
-                            "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                          )}
-                        >
-                          <item.icon
-                            className="h-6 w-6 shrink-0"
-                            aria-hidden="true"
-                          />
-                          {item.name}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </li>
-                <li>
-                  <div className="text-xs font-semibold leading-6 text-gray-400">
-                    Your teams
-                  </div>
-                  <ul role="list" className="-mx-2 mt-2 space-y-1">
-                    {teams.map((team) => (
-                      <li key={team.name}>
-                        <Link
-                          to={team.href}
-                          className={classNames(
-                            team.href == `/${categoryId}`
-                              ? "bg-gray-800 text-white"
-                              : "text-gray-400 hover:text-white hover:bg-gray-800",
-                            "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                          )}
-                        >
-                          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white">
-                            {team.initial}
-                          </span>
-                          <span className="truncate">{team.name}</span>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
+                  {renderListNavigation()}
                 </li>
               </ul>
             </nav>
@@ -233,59 +159,22 @@ export default function Layout() {
               <Bars3Icon className="h-6 w-6" aria-hidden="true" />
             </button>
 
-            {/* Separator */}
             <div
               className="h-6 w-px bg-gray-900/10 lg:hidden"
               aria-hidden="true"
             />
 
-            <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-              <form className="relative flex flex-1" action="#" method="GET">
-                <label htmlFor="search-field" className="sr-only">
-                  Search
-                </label>
-                <MagnifyingGlassIcon
-                  className="pointer-events-none absolute inset-y-0 left-0 h-full w-5 text-gray-400"
-                  aria-hidden="true"
-                />
-                <input
-                  id="search-field"
-                  className="block h-full w-full border-0 py-0 pl-8 pr-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm"
-                  placeholder="Search..."
-                  type="search"
-                  name="search"
-                />
-              </form>
-              <div className="flex items-center gap-x-4 lg:gap-x-6">
-                <button
-                  type="button"
-                  className="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500"
-                >
-                  <span className="sr-only">View notifications</span>
-                  <BellIcon className="h-6 w-6" aria-hidden="true" />
-                </button>
-
-                {/* Separator */}
-                <div
-                  className="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-900/10"
-                  aria-hidden="true"
-                />
-
-                {/* Profile dropdown */}
+            <div className="flex flex-1 gap-x-4 self-stretch justify-end lg:gap-x-6">
+              <div className="flex items-center justify-end gap-x-4 lg:gap-x-6">
                 <Menu as="div" className="relative">
-                  <Menu.Button className="-m-1.5 flex items-center p-1.5">
+                  <Menu.Button className="-m-1.5 flex items-center justify-end p-1.5">
                     <span className="sr-only">Open user menu</span>
-                    <img
-                      className="h-8 w-8 rounded-full bg-gray-50"
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                      alt=""
-                    />
                     <span className="hidden lg:flex lg:items-center">
                       <span
                         className="ml-4 text-sm font-semibold leading-6 text-gray-900"
                         aria-hidden="true"
                       >
-                        Tom Cook
+                        User
                       </span>
                       <ChevronDownIcon
                         className="ml-2 h-5 w-5 text-gray-400"
@@ -305,17 +194,14 @@ export default function Layout() {
                     <Menu.Items className="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
                       {userNavigation.map((item) => (
                         <Menu.Item key={item.name}>
-                          {({ active }) => (
-                            <Link
-                              to={item.href}
-                              className={classNames(
-                                active ? "bg-gray-50" : "",
-                                "block px-3 py-1 text-sm leading-6 text-gray-900"
-                              )}
-                            >
-                              {item.name}
-                            </Link>
-                          )}
+                          <div
+                            onClick={item.func}
+                            className={classNames(
+                              "block px-3 py-1 text-sm leading-6 text-gray-900"
+                            )}
+                          >
+                            {item.name}
+                          </div>
                         </Menu.Item>
                       ))}
                     </Menu.Items>

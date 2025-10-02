@@ -1,6 +1,8 @@
+import type { ReviewI } from "../api/api";
 import ChartForAllTime from "./ChartForAllTime";
+import LoadingBlock from "./LoadingBlock";
 
-function StatItem(stat: { name: string; value: string; unit?: string }) {
+function StatItem(stat: { name: string; value: number; unit?: string }) {
 	return (
 		<div
 			key={stat.name}
@@ -19,12 +21,15 @@ function StatItem(stat: { name: string; value: string; unit?: string }) {
 	);
 }
 
-function MainStat(): React.ReactElement {
+function MainStat({total, reviews} : {total?: number, reviews?: ReviewI[]}): React.ReactElement {
+
+	if(!reviews) return <LoadingBlock />
+
 	const stats = [
-		{ name: "Всего отзывов", value: "405" },
-		{ name: "Положительных отзывов", value: "365" },
-		{ name: "Нейтральных отзывов", value: "30" },
-		{ name: "Отрицательных отзывов", value: "10" },
+		{ name: "Всего отзывов", value: total || 0 },
+		{ name: "Положительных отзывов", value: (reviews ? reviews.filter(rew => rew.sentiment == "положительно").length : 0) },
+		{ name: "Нейтральных отзывов", value: (reviews ? reviews.filter(rew => rew.sentiment == "нейтрально").length : 0)  },
+		{ name: "Отрицательных отзывов", value: (reviews ? reviews.filter(rew => rew.sentiment == "отрицательно").length : 0)  },
 	];
 
 	return (
@@ -32,7 +37,7 @@ function MainStat(): React.ReactElement {
 			<div>
 				<div className="mx-auto max-w-7xl">
 					<div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-						{stats.map((stat, index) => (
+						{reviews != null && stats.map((stat, index) => (
 							<StatItem key={index} {...stat} />
 						))}
 					</div>
