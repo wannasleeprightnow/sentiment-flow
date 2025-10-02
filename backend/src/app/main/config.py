@@ -5,6 +5,7 @@ from typing import Literal
 from pydantic import BaseModel, Field, PostgresDsn
 
 BASE_DIR = Path(__file__).parent.parent.parent.parent
+MODELS_DIR = BASE_DIR / "models"
 
 
 class AppConfig(BaseModel):
@@ -15,7 +16,7 @@ class AppConfig(BaseModel):
     )
     docs_url: str | None = Field(alias="API_DOCS_URL", default=None)
     openapi_url: str | None = Field(alias="API_OPENAPI_URL", default=None)
-    prefix: str = Field(alias="APP_PREFIX_API", default="")
+    prefix: str = Field(alias="APP_PREFIX_API", default="/api")
 
 
 class JWTConfig(BaseModel):
@@ -62,12 +63,6 @@ class LoggingConfig(BaseModel):
     ] = Field(alias="LOG_LEVEL")
 
 
-class RedisConfig(BaseModel):
-    host: str = Field(alias="REDIS_HOST")
-    port: int = Field(alias="REDIS_PORT")
-    db_num: str = Field(alias="REDIS_NUM_DB")
-
-
 class Config(BaseModel):
     app: AppConfig = Field(
         default_factory=lambda: AppConfig(**environ)  # pyright: ignore
@@ -82,4 +77,3 @@ class Config(BaseModel):
         default_factory=lambda: PostgresConfig(**environ)  # pyright: ignore
     )
     sqla: SqlaConfig = Field(default_factory=lambda: SqlaConfig(**environ))  # pyright: ignore
-    redis: RedisConfig = Field(default_factory=lambda: RedisConfig(**environ))  # pyright: ignore
