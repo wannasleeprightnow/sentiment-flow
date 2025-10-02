@@ -11,6 +11,8 @@ export function Auth() {
 	const [password, setPassword] = useState("");
 
 	function signIn(): void {
+		console.log(email);
+		console.log(password);
 		navigate("/");
 	}
 
